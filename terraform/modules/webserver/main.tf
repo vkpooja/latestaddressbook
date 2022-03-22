@@ -47,7 +47,7 @@ data "aws_ami" "my-ami"{
 resource "aws_instance" "web" {
   ami           = data.aws_ami.my-ami.id
   instance_type = var.instance_type
-   associate_public_ip_address =true
+   associate_public_ip_address=true
    subnet_id=var.subnet_id
   vpc_security_group_ids = [aws_security_group.mywebsecurity.id]
    key_name="ansible-key"

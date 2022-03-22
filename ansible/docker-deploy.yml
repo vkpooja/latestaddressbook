@@ -2,6 +2,7 @@
 - hosts: aws_ec2
   become: true
   become_user: root
+  gather_facts: False
   vars_prompt:
    - name: docker_password
      prompt: enter docker pwd for the registry
