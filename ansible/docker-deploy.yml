@@ -26,5 +26,5 @@
   - name: run the docker image
     docker_container:
        name: addbook
-       image: devopstrainer/java-mvn-privaterepos:php
+       image: "{DOCKER_IMAGE}"
        published_ports: 80
