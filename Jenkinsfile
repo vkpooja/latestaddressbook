@@ -9,6 +9,8 @@ pipeline {
         DEV_SERVER_IP='ec2-user@3.110.178.169'
         ACM_IP='ec2-user@172.31.35.205'
         APP_NAME='java-mvn-app'
+        AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
     }
     stages {
         stage('COMPILE') {
@@ -54,11 +56,7 @@ pipeline {
             }
         }
         stage("Provision anisble target server with TF"){
-            environment{
-                  AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
-            AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
-            }
-             agent any
+            agent any
                    steps{
                        script{
                            dir('terraform'){
@@ -72,22 +70,19 @@ pipeline {
                        }
                    }
         }
-        stage('RUN ansible playbook on ACM'){
+        stage("RUN ansible playbook on ACM"){
             agent any
-                environment{
-                AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
-                AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
-                }
-                steps{
-                    script{
-                    echo "RUN THE Ansible playbook"
-                    echo "Deploying the app to ec2-instance provisioned bt TF"
-                    echo "${ANSIBLE_TARGET_PUBLIC_IP}"
-                    sshagent(['ACM']) {
-    sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
+            steps{
+            script{
+                echo "RUN THE Ansible playbook"
+                echo "Deploying the app to ec2-instance provisioned bt TF"
+                echo "${ANSIBLE_TARGET_PUBLIC_IP}"
+                sshagent(['ACM']) {
+    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} rm /home/ec2-user/.ssh/id_rsa"
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh 'scp $keyfile $ACM_IP:/home/ec2-user/.ssh/id_rsa'
     }
+    sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
     //install aws credetials plugin in jenkins
     //withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'AWS_CONFIGURE',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
     sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} 'bash /home/ec2-user/ansible/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${IMAGE_NAME}'"
