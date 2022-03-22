@@ -74,15 +74,19 @@ pipeline {
         }
         stage('RUN ansible playbook on ACM'){
             agent any
+                environment{
+                AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
+                AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
+                }
                 steps{
                     script{
-            echo "RUN THE Ansible playbook"
-              echo "Deploying the app to ec2-instance provisioned bt TF"
-               echo "${ANSIBLE_TARGET_PUBLIC_IP}"
-               sshagent(['ACM']) {
-                  sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user "
+                    echo "RUN THE Ansible playbook"
+                    echo "Deploying the app to ec2-instance provisioned bt TF"
+                    echo "${ANSIBLE_TARGET_PUBLIC_IP}"
+                    sshagent(['ACM']) {
+                        sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user "
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
-            sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"
+       sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"
        sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} bash /home/ec2-user/ansible/prepare-ACM.sh"
                                            
               
