@@ -3,9 +3,6 @@
   become: true
   become_user: root
   gather_facts: False
-  vars_prompt:
-   - name: docker_password
-     prompt: enter docker pwd for the registry
   tasks:
   - name: Install docker
     vars:
@@ -23,7 +20,7 @@
     docker_login:
        registry_url: https://index.docker.io/v1/
        username: devopstrainer
-       password: "{{docker_password}}"
+       password: "star"
   - name: run the docker image
     docker_container:
        name: addbook
