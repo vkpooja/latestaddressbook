@@ -86,9 +86,9 @@ pipeline {
                     sshagent(['ACM']) {
     sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
     withCredentials([string(credentialsId: 'AWS_ACCESS_KEY_ID', variable: 'AWS_ACCESS_KEY')]) {
-    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} export AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY}" }
+    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} echo ${AWS_ACCESS_KEY}" }
 	withCredentials([string(credentialsId: 'AWS_SECRET_ACCESS_KEY', variable: 'AWS_SECRET_KEY')]) {
-    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} export AWS_SECRET_ACCESS_KEY=${AWS_SECRET_KEY}"}
+    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP}  echo ${AWS_SECRET_KEY}"}
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
        sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"
        sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} bash /home/ec2-user/ansible/prepare-ACM.sh"
