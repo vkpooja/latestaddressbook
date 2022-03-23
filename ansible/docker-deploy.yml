@@ -10,10 +10,6 @@
     yum: name=docker state=present
   - name: start docker
     service: name=docker state=started
-  - name: Install docker python modules
-    pip:
-      name:
-      - docker
   - name: Docker test
     docker_image: name=nginx source=pull
   - name: docker login
