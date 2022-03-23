@@ -68,6 +68,7 @@ pipeline {
                             script: "terraform output ec2-ip",
                             returnStdout: true
                            ).trim()
+                         echo "${ANSIBLE_TARGET_PUBLIC_IP}"   
                        }
                        }
                    }
