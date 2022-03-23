@@ -11,7 +11,8 @@ pipeline {
         APP_NAME='java-mvn-app'
         AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
-        DOCKER_REG_PASSWORD=credentials("PASSWORD")
+        //created a new credential of type secret text to store docker pwd
+        DOCKER_REG_PASSWORD=credentials("DOCKER_REG_PASSWORD")
     }
     stages {
         stage('COMPILE') {
