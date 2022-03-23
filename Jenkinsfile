@@ -13,45 +13,12 @@ pipeline {
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
     }
     stages {
-        stage('PACKAGE+BUILD DOCKER IMAGE ON BUILD SERVER'){
-            agent any
-           steps{
-            script{
-            sshagent(['Test_server-Key']) {
-        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                     echo "PACKAGING THE CODE"
-                     sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER_IP}:/home/ec2-user"
-                     sh "ssh -o StrictHostKeyChecking=no ${DEV_SERVER_IP} 'bash ~/server-script.sh'"
-                     sh "ssh ${DEV_SERVER_IP} sudo docker build -t  ${IMAGE_NAME} /home/ec2-user/addressbook"
-                    sh "ssh ${DEV_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
-                    sh "ssh ${DEV_SERVER_IP} sudo docker push ${IMAGE_NAME}"
-                    }
-                    }
-                }
-            }
-        }
-        stage("Provision anisble target server with TF"){
-            agent any
-                   steps{
-                       script{
-                           dir('terraform'){
-                           sh "terraform init"
-                           sh "terraform apply --auto-approve"
-                           ANSIBLE_TARGET_PUBLIC_IP = sh(
-                            script: "terraform output ec2-ip",
-                            returnStdout: true
-                           ).trim()
-                       }
-                       }
-                   }
-        }
-        stage("RUN ansible playbook on ACM"){
+      stage("RUN ansible playbook on ACM"){
             agent any
             steps{
             script{
                 echo "RUN THE Ansible playbook"
                 echo "Deploying the app to ec2-instance provisioned bt TF"
-                echo "${ANSIBLE_TARGET_PUBLIC_IP}"
                 sshagent(['ACM']) {
     sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
