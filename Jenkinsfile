@@ -11,7 +11,7 @@ pipeline {
         APP_NAME='java-mvn-app'
         AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
-        DOCKER_REG_PASSWORD=credentias("PASSWORD")
+        DOCKER_REG_PASSWORD=credentials("PASSWORD")
     }
     stages {
         stage('COMPILE') {
