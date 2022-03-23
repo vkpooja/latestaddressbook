@@ -8,7 +8,7 @@ pipeline {
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
         //image is built and pushed to docker hub from dev server
         DEV_SERVER_IP='ec2-user@3.108.185.183'
-        ACM_IP='ec2-user@35.154.11.198'
+        ACM_IP='ec2-user@65.2.132.235'
         APP_NAME='java-mvn-app'
         AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
