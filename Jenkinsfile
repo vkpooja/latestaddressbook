@@ -78,6 +78,7 @@ pipeline {
                 echo "Deploying the app to ec2-instance provisioned bt TF"
                 echo "${ANSIBLE_TARGET_PUBLIC_IP}"
                 sshagent(['ACM']) {
+    // sh "scp -o StrictHostKeyChecking=no ansible/* ec2-user@${ANSIBLE_SERVER}:/home/ec2-user"
      sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"
