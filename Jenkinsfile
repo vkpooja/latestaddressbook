@@ -21,7 +21,6 @@ pipeline {
             steps {
                 script{
                     echo "COMPILING THE CODE"
-                    git 'https://github.com/preethid/addressbook.git'
                     sh 'mvn compile'
                 }
                           }
@@ -85,7 +84,7 @@ pipeline {
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"    
     }
-    //install aws credetials plugin in jenkins
+    //install aws credetials plugin in jenkins --another way
     //withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'AWS_CONFIGURE',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
     sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} bash /home/ec2-user/ansible/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${DOCKER_REG_PASSWORD} ${IMAGE_NAME}"
        //     }
