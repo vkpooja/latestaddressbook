@@ -79,7 +79,7 @@ pipeline {
             script{
                 echo "copy ansible files on ACM and run the playbook"
                sshagent(['ACM']) {
-    sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
+    sh "scp -o StrictHostKeyChecking=no ansible/* ${ACM_IP}:/home/ec2-user"
     //copy the ansible target key on ACM as private key file
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"    
