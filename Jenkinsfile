@@ -6,8 +6,11 @@ pipeline {
     }
      environment{
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        DEV_SERVER_IP='ec2-user@3.111.198.154'
+        DEV_SERVER_IP='ec2-user@65.2.125.216'
+        ACM_IP='ec2-user@52.66.196.95'
         APP_NAME='java-mvn-app'
+        AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
+        AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
     }
     stages {
         stage('COMPILE') {
@@ -52,18 +55,14 @@ pipeline {
                 }
             }
         }
-        stage("Provision deploy server with TF"){
-            environment{
-                   AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
-                   AWS_SECRET_ACCESS_KEY=credentials("jenkins_aws_secret_access_key")
-            }
-             agent any
+        stage("Provision anisble target server with TF"){
+            agent any
                    steps{
                        script{
                            dir('terraform'){
                            sh "terraform init"
                            sh "terraform apply --auto-approve"
-                           EC2_PUBLIC_IP = sh(
+                           ANSIBLE_TARGET_PUBLIC_IP = sh(
                             script: "terraform output ec2-ip",
                             returnStdout: true
                            ).trim()
@@ -71,23 +70,26 @@ pipeline {
                        }
                    }
         }
-        stage('DEPLOY ON EC2 instance'){
+        stage("RUN ansible playbook on ACM"){
             agent any
-                steps{
-                    script{
-            echo "RUN THE APP ON ec2 instance"
-               echo "Waiting for ec2 instance to initialise"
-               sleep(time: 90, unit: "SECONDS")
-               echo "Deploying the app to ec2-instance provisioned bt TF"
-               echo "${EC2_PUBLIC_IP}"
-               sshagent(['Test_server-Key']) {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                      sh "ssh -o StrictHostKeyChecking=no ec2-user@${EC2_PUBLIC_IP} sudo docker login -u $USERNAME -p $PASSWORD"
-                      sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker run -itd -p 8001:8080 ${IMAGE_NAME}"
-                      
-                }
-            }
-            }
-                }}    
+            steps{
+            script{
+                echo "RUN THE Ansible playbook"
+                echo "Deploying the app to ec2-instance provisioned bt TF"
+                echo "${ANSIBLE_TARGET_PUBLIC_IP}"
+                sshagent(['ACM']) {
+     sh "scp -o StrictHostKeyChecking=no -r ./ansible ${ACM_IP}:/home/ec2-user"
+    withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
+    sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"
+    
+    }
+    //install aws credetials plugin in jenkins
+    //withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'AWS_CONFIGURE',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
+    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} 'bash /home/ec2-user/ansible/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${IMAGE_NAME}'"
+       //     }
+        }
+        }
+        }    
+    }
     }
 }
