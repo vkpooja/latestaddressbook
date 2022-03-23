@@ -27,7 +27,7 @@ pipeline {
     }
     //install aws credetials plugin in jenkins
     //withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'AWS_CONFIGURE',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
-    sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} 'bash /home/ec2-user/ansible/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${IMAGE_NAME}'"
+   // sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} 'bash /home/ec2-user/ansible/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${IMAGE_NAME}'"
        //     }
         }
         }
