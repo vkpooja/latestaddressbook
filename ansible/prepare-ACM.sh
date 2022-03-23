@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 sudo amazon-linux-extras install ansible2
-sudo yum install python-boto3
+sudo yum install python-boto3 -y
 aws configure set aws_access_key_id $1
 aws configure set aws_secret_access_key $2
 ansible-inventory -i /home/ec2-user/ansible/inventory_aws_ec2.yml --graph
