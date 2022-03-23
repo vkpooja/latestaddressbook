@@ -2,7 +2,9 @@
 - hosts: aws_ec2
   become: true
   become_user: root
-  gather_facts: False
+  gather_facts: false
+  vars:
+    docker_password: ""
   tasks:
   - name: Install docker
     vars:
@@ -20,7 +22,7 @@
     docker_login:
        registry_url: https://index.docker.io/v1/
        username: devopstrainer
-       password: "star"
+       password: {{docker_password}}
   - name: run the docker image
     docker_container:
        name: addbook
