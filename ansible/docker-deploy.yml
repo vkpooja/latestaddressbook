@@ -3,8 +3,6 @@
   become: true
   become_user: root
   gather_facts: false
-  vars:
-    docker_password: "{DOCKER_REG_PASSWORD}"
   tasks:
   - name: Install docker
     vars:
@@ -22,7 +20,7 @@
     docker_login:
        registry_url: https://index.docker.io/v1/
        username: devopstrainer
-       password: {{docker_password}}
+       password: "{DOCKER_REG_PASSWORD}"
   - name: run the docker image
     docker_container:
        name: addbook
