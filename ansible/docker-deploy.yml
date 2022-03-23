@@ -4,7 +4,7 @@
   become_user: root
   gather_facts: false
   vars:
-    docker_password: ""
+    docker_password: "{DOCKER_REG_PASSWORD}"
   tasks:
   - name: Install docker
     vars:
