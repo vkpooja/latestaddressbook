@@ -19,5 +19,5 @@
   - name: run the docker image
     docker_container:
        name: addbook
-       image: "{DOCKER_IMAGE}"
+       image: "${DOCKER_IMAGE}"
        published_ports: 80
