@@ -3,6 +3,7 @@ pipeline{
     parameters{
         string(name:'Env',defaultValue:'Test',description:'version to deploy')
         booleanParam(name:'executeTests',defaultValue: true,description:'decide to run TC')
+        choice(name:'APPVERSION',choices['1.1','1.2','1.3'])
     }
     stages{        
         stage('compile'){
@@ -27,7 +28,7 @@ pipeline{
         stage('Package'){
             steps{
                 script{
-                    echo "Package the code"
+                    echo "Package the code ${params.APPVERSION}"
                 }
             }
         }
