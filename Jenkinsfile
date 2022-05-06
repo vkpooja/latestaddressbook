@@ -35,7 +35,7 @@ pipeline{
             }
             steps{
                 script{
-                    echo "Package the code ${params.NEWVERSION}"
+                    echo "Package the code ${'NEWVERSION'}"
 
                     echo "Package the code ${params.APPVERSION}"
                 }
