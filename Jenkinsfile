@@ -1,45 +1,34 @@
 pipeline{
     agent any
-    parameters{
-        string(name:'Env',defaultValue:'Test',description:'version to deploy')
-        booleanParam(name:'executeTests',defaultValue: true,description:'decide to run TC')
-        choice(name:'APPVERSION',choices:['1.1','1.2','1.3'])
+    tools{
+        jdk 'myjava'
+        maven 'mymaven'
     }
-    stages{        
-        stage('compile'){
+    stages{
+        stage("COMPILE"){
             steps{
                 script{
-                    echo "Compiling the code"
+                  echo "COMPILIG THE CODE"
+                  sh 'mvn compile'
                 }
             }
         }
-        stage('UnitTest'){
-            when{
-                expression{
-                    params.executeTests == true
-                }
-            }
-            steps{
-                script{
-                    echo "Testing the code in ${params.Env} env"
+        stage("UNITTEST"){
+         steps{
+           script{
+               echo "Testing THE CODE"
+                sh 'mvn test'
                 }
             }
         }
-        stage('Package'){
-            input{
-                message "Select the version to the package"
-                ok "Version Selected"
-                parameters{
-                    choice(name:'NEWVERSION',choices:['2.1','2.2','2.3'])
-                }
-            }
+        stage("PACKAGE"){
             steps{
-                script{
-                    echo "Package the code ${NEWVERSION}"
-
-                    echo "Package the code ${params.APPVERSION}"
-                }
-            }
+                    script{
+                    echo "Packaging THE CODE"
+                sh 'mvn package'
         }
+    }
+}
+     
     }
 }
