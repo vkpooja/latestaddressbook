@@ -31,9 +31,11 @@ pipeline{
         stage("PACKAGE"){
             agent any
             steps{
-                    script{
-                    echo "Packaging THE CODE"
-                sh 'mvn package'
+            script{
+                echo "Packaging THE CODE"
+                sshagent(['BUILD_SERVER_KEY']) {
+                sh "ssh ec2-user@172.31.8.7 'mvn package'"
+              }
         }
     }
 }
