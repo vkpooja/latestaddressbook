@@ -35,11 +35,11 @@ pipeline{
             script{
                 echo "Packaging THE CODE"
                 sshagent(['BUILD_SERVER_KEY']) {
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.8.7 'mvn package'"
+                sh "scp -o StrictHostKeyChecking=no server-script.sh ec2-user@172.31.8.7:/home/ec2-user"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@172.31.8.7 'bash ~/server-script.sh'"
               }
         }
     }
-}
-     
+}     
     }
 }
