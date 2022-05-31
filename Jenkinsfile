@@ -6,8 +6,8 @@ pipeline{
     }
     environment{
         IMAGE_NAME ='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        BUILD_SERVER_IP ='ec2-user@3.110.40.103'
-        DEPLOY_SERVER_IP='ec2-user@13.126.72.55'
+        BUILD_SERVER_IP ='ec2-user@52.66.242.157'
+        APP_NAME='java-mvn-app'
         }
 
     stages{
@@ -52,19 +52,13 @@ pipeline{
     }
 }     
         }
-    stage("Deploy the docker image"){
+    stage("Deploy the docker image on k8s cluster"){
     agent any
         steps{
             script{
-                sshagent(['BUILD_SERVER_KEY']) {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                sh "ssh -o StrictHostKeyChecking=no ${DEPLOY_SERVER_IP} sudo yum install docker -y"
-                sh "ssh ${DEPLOY_SERVER_IP} sudo systemctl  start docker"
-                sh "ssh ${DEPLOY_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
-                sh "ssh ${DEPLOY_SERVER_IP} sudo docker run -itd -P ${IMAGE_NAME}"
-                    }
-                         }
-                }
+                echo "RUN THE APP ON K8S CLUSTER"
+                sh 'envsubst < java-mvn-deploy-svc.yml | sudo /usr/local/bin/kubectl apply -f -'
+                 }
             }
                  }
     }
