@@ -81,7 +81,7 @@ pipeline {
                sshagent(['ACM']) {
     sh "scp -o StrictHostKeyChecking=no ansible/* ${ACM_IP}:/home/ec2-user"
     //copy the ansible target key on ACM as private key file
-    withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
+    withCredentials([sshUserPrivateKey(credentialsId: 'ANSIBLE_TARGET_KEY',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"    
     }
     //install aws credetials plugin in jenkins --another way
