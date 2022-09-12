@@ -7,8 +7,8 @@ pipeline {
      environment{
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
         //image is built and pushed to docker hub from dev server
-        DEV_SERVER_IP='ec2-user@65.1.86.152'
-        ACM_IP='ec2-user@52.66.209.67'
+        DEV_SERVER_IP='ec2-user@3.109.209.70'
+        ACM_IP='ec2-user@13.234.76.71'
         AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
         //created a new credential of type secret text to store docker pwd
@@ -43,7 +43,7 @@ pipeline {
             agent any
            steps{
             script{
-            sshagent(['Test_server-Key']) {
+            sshagent(['ssh-Key']) {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                      echo "PACKAGING THE CODE"
                      sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER_IP}:/home/ec2-user"
@@ -77,7 +77,7 @@ pipeline {
             steps{
             script{
                 echo "copy ansible files on ACM and run the playbook"
-               sshagent(['ACM']) {
+               sshagent(['ssh-key']) {
     sh "scp -o StrictHostKeyChecking=no ansible/* ${ACM_IP}:/home/ec2-user"
     //copy the ansible target key on ACM as private key file
     withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
