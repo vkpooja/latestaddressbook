@@ -5,9 +5,8 @@ pipeline {
         maven 'mymaven'
     }
     environment{
-        BUILD_SERVER_IP="ec2-user@65.2.30.32"
+        BUILD_SERVER_IP="ec2-user@43.204.141.135"
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        
     }
     stages {
         stage('COMPILE') {
@@ -45,21 +44,11 @@ pipeline {
                 sh "ssh ${BUILD_SERVER_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/addressbook"  
                 sh  "ssh ${BUILD_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
                 sh "ssh ${BUILD_SERVER_IP} sudo docker push ${IMAGE_NAME}"
-                 }
+                sh "ssh ${BUILD_SERVER_IP} sudo docker run -itd -P ${IMAGE_NAME}"
+                }
               }  
             }
         }
-        }
-        stage('DEPLOY TO EKS'){
-            agent any
-            steps{
-                script{
-                    echo "RUN ON K8S CLUSTER"
-                    sh 'envsubst java-mvn-app.yml | sudo kubectl apply -f -'
-                }              
-            
-            }
-            }
         }
         }    
     }
