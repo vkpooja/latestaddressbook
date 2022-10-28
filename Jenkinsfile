@@ -38,7 +38,7 @@ pipeline {
             steps {
                 script{
                 echo "PACKAGING THE CODE"
-                sshagent(['BUILD_SERVER_KEY']) {
+                sshagent(['ssh-key']) {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                 sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_SERVER_IP}:/home/ec2-user"
                 sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/server-script.sh'"  
