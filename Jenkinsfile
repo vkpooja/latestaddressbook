@@ -5,9 +5,7 @@ pipeline {
         maven 'mymaven'
     }
     environment{
-        BUILD_SERVER_IP="ec2-user@65.2.30.32"
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        
     }
     stages {
         stage('COMPILE') {
@@ -33,32 +31,43 @@ pipeline {
                 }
             }
             }
+          stage("Provision deploy server with TF"){
+            environment{
+              AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
+             AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
+            }
+             agent any
+                   steps{
+                       script{
+                           dir('terraform'){
+                           sh "terraform init"
+                           sh "terraform apply --auto-approve"
+                           EC2_PUBLIC_IP = sh(
+                            script: "terraform output ec2-ip",
+                            returnStdout: true
+                           ).trim()
+                       }
+                       }
+                   }
+        }
        stage('Package+BUILD THE DOCKER IMAGE') {
             agent any
             steps {
                 script{
                 echo "PACKAGING THE CODE"
-                sshagent(['ssh-key']) {
+                sshagent(['BUILD_SERVER_KEY']) {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                sh "scp -o StrictHostKeyChecking=no server-script.sh ${BUILD_SERVER_IP}:/home/ec2-user"
-                sh "ssh -o StrictHostKeyChecking=no ${BUILD_SERVER_IP} 'bash ~/server-script.sh'"  
-                sh "ssh ${BUILD_SERVER_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/addressbook"  
-                sh  "ssh ${BUILD_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
-                sh "ssh ${BUILD_SERVER_IP} sudo docker push ${IMAGE_NAME}"
-                 }
+                sh "scp -o StrictHostKeyChecking=no server-script.sh ec2-user@${EC2_PUBLIC_IP}:/home/ec2-user"
+                sh "ssh -o StrictHostKeyChecking=no ec2-user@${EC2_PUBLIC_IP} 'bash ~/server-script.sh'"  
+                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/addressbook"  
+                sh  "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker login -u $USERNAME -p $PASSWORD"
+                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker push ${IMAGE_NAME}"
+                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker run -itd -P ${IMAGE_NAME}"
+                }
               }  
             }
         }
         }
-        stage('DEPLOY TO EKS'){
-            agent any
-            steps{
-                script{
-                    echo "RUN ON K8S CLUSTER"
-                    sh 'envsubst < java-mvn-app.yml | sudo /usr/local/bin/kubectl apply -f -'
-                }              
-            
-            }
-            }
-        }
-        }   
+        }    
+    }
+    
