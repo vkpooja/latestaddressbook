@@ -33,8 +33,8 @@ pipeline {
             }
           stage("Provision deploy server with TF"){
             environment{
-              AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
-             AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
+              AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
+             AWS_SECRET_ACCESS_KEY=credentials("jenkins_aws_secret_access_key")
             }
              agent any
                    steps{
@@ -55,7 +55,7 @@ pipeline {
             steps {
                 script{
                 echo "PACKAGING THE CODE"
-                sshagent(['BUILD_SERVER_KEY']) {
+                sshagent(['ssh-key']) {
                 withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                 sh "scp -o StrictHostKeyChecking=no server-script.sh ec2-user@${EC2_PUBLIC_IP}:/home/ec2-user"
                 sh "ssh -o StrictHostKeyChecking=no ec2-user@${EC2_PUBLIC_IP} 'bash ~/server-script.sh'"  
