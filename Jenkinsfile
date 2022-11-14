@@ -6,6 +6,10 @@ pipeline {
     }
     environment{
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
+        ACM_IP=''
+        AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
+        AWS_SECRET_ACCESS_KEY=credentials("jenkins_aws_secret_access_key")
+        DOCKER_REG_PASSWORD=credentials("DOCKER_REG_PASSWORD")
     }
     stages {
         stage('COMPILE') {
@@ -32,17 +36,13 @@ pipeline {
             }
             }
           stage("Provision deploy server with TF"){
-            environment{
-              AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
-             AWS_SECRET_ACCESS_KEY=credentials("jenkins_aws_secret_access_key")
-            }
-             agent any
+              agent any
                    steps{
                        script{
                            dir('terraform'){
                            sh "terraform init"
                            sh "terraform apply --auto-approve"
-                           EC2_PUBLIC_IP = sh(
+                           ANSIBLE_TARGET_PUBLIC_IP = sh(
                             script: "terraform output ec2-ip",
                             returnStdout: true
                            ).trim()
@@ -56,15 +56,12 @@ pipeline {
                 script{
                 echo "PACKAGING THE CODE"
                 sshagent(['ssh-key']) {
-                withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
-                sh "scp -o StrictHostKeyChecking=no server-script.sh ec2-user@${EC2_PUBLIC_IP}:/home/ec2-user"
-                sh "ssh -o StrictHostKeyChecking=no ec2-user@${EC2_PUBLIC_IP} 'bash ~/server-script.sh'"  
-                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker build -t ${IMAGE_NAME} /home/ec2-user/addressbook"  
-                sh  "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker login -u $USERNAME -p $PASSWORD"
-                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker push ${IMAGE_NAME}"
-                sh "ssh ec2-user@${EC2_PUBLIC_IP} sudo docker run -itd -P ${IMAGE_NAME}"
+                 sh "scp -o StrictHostKeyChecking=no ansible/* ${ACM_IP}:/home/ec2-user"
+                 withCredentials([sshUserPrivateKey(credentialsId: 'Ansible_target',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
+                    sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"    
+                    }
+            sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} bash /home/ec2-user/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${DOCKER_REG_PASSWORD} ${IMAGE_NAME}"
                 }
-              }  
             }
         }
         }
