@@ -6,7 +6,7 @@ pipeline {
     }
     environment{
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        ACM_IP=''
+        ACM_IP='ec2-user@13.233.115.245'
         AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
         AWS_SECRET_ACCESS_KEY=credentials("jenkins_aws_secret_access_key")
         DOCKER_REG_PASSWORD=credentials("DOCKER_REG_PASSWORD")
