@@ -5,6 +5,7 @@ pipeline {
         maven 'mymaven'
     }
     environment{
+        DEV_SERVER_IP='ec2-user@13.233.253.109'
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
         ACM_IP='ec2-user@13.233.115.245'
         AWS_ACCESS_KEY_ID =credentials("jenkins_aws_access_key_id")
@@ -35,6 +36,23 @@ pipeline {
                 }
             }
             }
+        stage('PACKAGE+BUILD DOCKER IMAGE ON BUILD SERVER'){
+            agent any
+           steps{
+            script{
+            sshagent(['ssh-key']) {
+        withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
+                     echo "PACKAGING THE CODE"
+                     sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER_IP}:/home/ec2-user"
+                     sh "ssh -o StrictHostKeyChecking=no ${DEV_SERVER_IP} 'bash ~/server-script.sh'"
+                     sh "ssh ${DEV_SERVER_IP} sudo docker build -t  ${IMAGE_NAME} /home/ec2-user/addressbook"
+                    sh "ssh ${DEV_SERVER_IP} sudo docker login -u $USERNAME -p $PASSWORD"
+                    sh "ssh ${DEV_SERVER_IP} sudo docker push ${IMAGE_NAME}"
+                    }
+                    }
+                }
+            }
+        }
           stage("Provision deploy server with TF"){
               agent any
                    steps{
