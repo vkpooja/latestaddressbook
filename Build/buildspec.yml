@@ -3,10 +3,10 @@ phases:
   pre_build:
     commands:
       - echo Logging in to Amazon ECR...
-      - $(aws ecr get-login --no-include-email --region eu-central-1)
+      - $(aws ecr get-login --no-include-email --region ap-south-1)
       - COMMIT_HASH=$(echo $CODEBUILD_BUILD_NUMBER)
       - IMAGE_TAG=${COMMIT_HASH}
-      - REPOSITORY_URI=360013183333.dkr.ecr.eu-central-1.amazonaws.com/ssc-list-dev-repo
+      - REPOSITORY_URI=858990550959.dkr.ecr.ap-south-1.amazonaws.com/repo1
   build:
     commands:
      - git checkout develop
