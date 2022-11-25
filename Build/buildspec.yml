@@ -4,8 +4,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region ap-south-1)
-      - COMMIT_HASH=$(echo $BUILD_NUMBER)
-      - IMAGE_TAG=${COMMIT_HASH}
+      - IMAGE_TAG=${echo $CODEBUILD_BUILD_ID | cut -c 1-7}
       - REPOSITORY_URI=858990550959.dkr.ecr.ap-south-1.amazonaws.com/repo1
   build:
     commands:
