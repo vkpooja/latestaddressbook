@@ -9,7 +9,7 @@ phases:
       - REPOSITORY_URI=858990550959.dkr.ecr.ap-south-1.amazonaws.com/repo1
   build:
     commands:
-     - git checkout develop
+     - git checkout TEST
      - docker build -t $REPOSITORY_URI:latest .
      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
