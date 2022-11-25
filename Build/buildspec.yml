@@ -1,0 +1,19 @@
+version: 0.2
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - $(aws ecr get-login --no-include-email --region eu-central-1)
+      - COMMIT_HASH=$(echo $CODEBUILD_BUILD_NUMBER)
+      - IMAGE_TAG=${COMMIT_HASH}
+      - REPOSITORY_URI=360013183333.dkr.ecr.eu-central-1.amazonaws.com/ssc-list-dev-repo
+  build:
+    commands:
+     - git checkout develop
+     - docker build -t $REPOSITORY_URI:latest .
+     - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
+  post_build:
+    commands:
+      - echo Build completed on `date`
+      - echo Pushing the Docker image...
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
