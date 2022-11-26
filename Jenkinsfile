@@ -48,6 +48,9 @@ pipeline {
                         //sh 'git clone https://github.com/preethid/addressbook.git'
                         
                         sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
+                        sh 'git add .'
+                        sh 'git commit -m "k8s files updated"'
+                        sh 'git push origin TEST
                 }
 
     }
