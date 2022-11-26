@@ -46,14 +46,22 @@ pipeline {
                     script{
                         echo "RUN THE APP ON K8S CLUSTER"
                         //sh 'git clone https://github.com/preethid/addressbook.git'
-                        
-                        sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
+                          sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
+                        withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
+                        def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
+                                 sh "git config user.email admin@example.com"
+                                 sh "git config user.name example"
+                                 sh "git add ."
+                                 sh "git commit -m 'Triggered Build: ${env.BUILD_NUMBER}'"
+                                 sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/example.git"
+                              }
+                      
                         //sh 'git add .'
-                        sh 'git checkout TEST'
-                        sh 'git config --global user.name "Mona Lisa"'
-                        sh 'git config --global user.email "mona@gmail.com"'
-                        sh 'git commit -a -m "k8s files updated"'
-                        sh 'git push origin TEST'
+                        // sh 'git checkout TEST'
+                        // sh 'git config --global user.name "Mona Lisa"'
+                        // sh 'git config --global user.email "mona@gmail.com"'
+                        // sh 'git commit -a -m "k8s files updated"'
+                        // sh 'git push origin TEST'
                 }
 
     }
