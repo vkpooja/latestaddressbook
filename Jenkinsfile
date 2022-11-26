@@ -52,7 +52,7 @@ pipeline {
                         sh 'git config --global user.name "Mona Lisa"'
                         sh 'git config --global user.email "mona@gmail.com"'
                         sh 'git commit -a -m "k8s files updated"'
-                        sh 'git push origin/TEST'
+                        sh 'git push origin TEST'
                 }
 
     }
