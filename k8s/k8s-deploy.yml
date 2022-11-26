@@ -18,7 +18,7 @@ spec:
       - name: my-registry-key
       containers:
       - name: addbook
-        image: devopstrainer/java-mvn-privaterepos:33
+        image: 858990550959.dkr.ecr.ap-south-1.amazonaws.com/repo1:34
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
