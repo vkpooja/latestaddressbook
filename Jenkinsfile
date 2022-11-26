@@ -37,7 +37,7 @@ pipeline {
     sh 'aws configure set region ap-south-1'
     sh "aws codebuild create-project --name '${JOB_NAME}_${BUILD_NUMBER}' --source type=GITHUB,location=https://github.com/preethid/addressbook.git,buildspec=Build/buildspec.yml --source-version=TEST --artifacts type=NO_ARTIFACTS --environment type=LINUX_CONTAINER,image='aws/codebuild/amazonlinux2-x86_64-standard:4.0',computeType=BUILD_GENERAL1_SMALL,privilegedMode=true --service-role arn:aws:iam::858990550959:role/service-role/codebuild-TEST-service-role"
     awsCodeBuild credentialsType: 'keys', projectName: '${JOB_NAME}_${BUILD_NUMBER}', region: 'ap-south-1', sourceVersion: 'TEST',sourceControlType: 'project'
-              
+    sh "aws codebuild delete-project --name '${JOB_NAME}_${BUILD_NUMBER}'"         
                 }
             }
         }
