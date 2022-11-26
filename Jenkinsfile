@@ -49,6 +49,8 @@ pipeline {
                         
                         sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                         sh 'git add .'
+                        sh 'git config --global user.name "Mona Lisa"'
+                        sh 'git config --global user.email "mona@gmail.com"'
                         sh 'git commit -m "k8s files updated"'
                         sh 'git push origin TEST'
                 }
