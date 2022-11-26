@@ -55,7 +55,8 @@ pipeline {
                                  sh "git config user.name example"
                                  sh "git add ."
                                  sh "git commit -m 'Triggered Build: ${env.BUILD_NUMBER}'"
-                                 sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
+                                 //sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
+                                 sh "https://github.com/preethid/addressbook.git"
                               }
                       
                         //sh 'git add .'
