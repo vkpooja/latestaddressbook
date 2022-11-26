@@ -45,9 +45,9 @@ pipeline {
             steps{
                     script{
                         echo "RUN THE APP ON K8S CLUSTER"
-                        sh 'git clone https://github.com/preethid/addressbook.git'
+                        //sh 'git clone https://github.com/preethid/addressbook.git'
                         
-                        sh 'envsubst < k8s-deploy.yml >  k8s/k8s-deploy.yml'
+                        sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                 }
 
     }
