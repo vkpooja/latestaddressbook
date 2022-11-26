@@ -45,7 +45,7 @@ pipeline {
             steps{
                     script{
                         echo "RUN THE APP ON K8S CLUSTER"
-                        sh 'git pull origin TEST'
+                       // sh 'git pull origin TEST'
                         sh "git checkout TEST"
                           sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                         withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
@@ -56,6 +56,7 @@ pipeline {
                                  sh "git add ."
                                  sh "git commit -m 'Triggered Build: ${env.BUILD_NUMBER}'"
                                  //sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
+                                 sh "git pull https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
                                  sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
                                  //sh "git push https://github.com/preethid/addressbook.git"
                               }
