@@ -46,10 +46,11 @@ pipeline {
                     script{
                         echo "RUN THE APP ON K8S CLUSTER"
                         //sh 'git clone https://github.com/preethid/addressbook.git'
+                        sh "git checkout TEST"
                           sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                         withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
-                                 sh "git checkout TEST"
+                                 
                                  sh "git config user.email admin@example.com"
                                  sh "git config user.name example"
                                  sh "git add ."
