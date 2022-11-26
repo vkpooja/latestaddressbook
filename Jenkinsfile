@@ -49,11 +49,12 @@ pipeline {
                           sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                         withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
                         def encodedPassword = URLEncoder.encode("$GIT_PASSWORD",'UTF-8')
+                                 sh "git checkout TEST"
                                  sh "git config user.email admin@example.com"
                                  sh "git config user.name example"
                                  sh "git add ."
                                  sh "git commit -m 'Triggered Build: ${env.BUILD_NUMBER}'"
-                                 sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/example.git"
+                                 sh "git push https://${GIT_USERNAME}:${encodedPassword}@github.com/${GIT_USERNAME}/addressbook.git"
                               }
                       
                         //sh 'git add .'
