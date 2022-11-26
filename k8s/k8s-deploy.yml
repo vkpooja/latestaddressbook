@@ -18,7 +18,7 @@ spec:
       - name: my-registry-key
       containers:
       - name: addbook
-        image: devopstrainer/java-mvn-privaterepos:20
+        image: devopstrainer/java-mvn-privaterepos:30
         imagePullPolicy: Always
         ports:
         - containerPort: 8080
