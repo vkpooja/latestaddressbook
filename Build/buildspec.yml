@@ -4,7 +4,7 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - $(aws ecr get-login --no-include-email --region ap-south-1)
-      - IMAGE=$(echo $CODEBUILD_BUILD_ID | cut -c 1-7)
+      - IMAGE=$(echo $CODEBUILD_BUILD_ID | cut -c 1-9)
       - IMAGE_TAG=${IMAGE}
       - REPOSITORY_URI=858990550959.dkr.ecr.ap-south-1.amazonaws.com/repo1
   build:
