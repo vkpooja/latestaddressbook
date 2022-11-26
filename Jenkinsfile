@@ -45,7 +45,7 @@ pipeline {
             steps{
                     script{
                         echo "RUN THE APP ON K8S CLUSTER"
-                        sh 'git pull https://github.com/preethid/addressbook.git'
+                        sh 'git pull origin TEST'
                         sh "git checkout TEST"
                           sh 'envsubst < k8s-deploy.yml > k8s/k8s-deploy.yml'
                         withCredentials([usernamePassword(credentialsId: 'github', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USERNAME')]) {
