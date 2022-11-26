@@ -1,1 +1,39 @@
-addbook
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: addbook
+  labels:
+     app: addbook
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: addbook
+  template:
+    metadata:
+      labels:
+        app: addbook
+    spec:
+      imagePullSecrets:
+      - name: my-registry-key
+      containers:
+      - name: addbook
+        image: devopstrainer/java-mvn-privaterepos:20
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: addbook
+  labels: 
+      app: addbook
+spec:
+  selector:
+    app: addbook
+  ports:
+  - port: 8080
+    targetPort: 8080
+    protocol: TCP
+  type: LoadBalancer
