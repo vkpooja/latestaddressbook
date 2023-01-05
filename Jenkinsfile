@@ -6,13 +6,11 @@ pipeline {
     }
      environment{
         IMAGE_NAME='devopstrainer/java-mvn-privaterepos:$BUILD_NUMBER'
-        //image is built and pushed to docker hub from dev server
-        DEV_SERVER_IP='ec2-user@65.0.86.53'
-        ACM_IP='ec2-user@13.234.239.123'
+        DEV_SERVER_IP='ec2-user@13.232.96.63'
+        ACM_IP='ec2-user@65.2.176.52'
         APP_NAME='java-mvn-app'
         AWS_ACCESS_KEY_ID =credentials("AWS_ACCESS_KEY_ID")
         AWS_SECRET_ACCESS_KEY=credentials("AWS_SECRET_ACCESS_KEY")
-        //created a new credential of type secret text to store docker pwd
         DOCKER_REG_PASSWORD=credentials("DOCKER_REG_PASSWORD")
     }
     stages {
@@ -44,7 +42,7 @@ pipeline {
             agent any
            steps{
             script{
-            sshagent(['Test_server-Key']) {
+            sshagent(['DEV_SERVER_KEY']) {
         withCredentials([usernamePassword(credentialsId: 'docker-hub', passwordVariable: 'PASSWORD', usernameVariable: 'USERNAME')]) {
                      echo "PACKAGING THE CODE"
                      sh "scp -o StrictHostKeyChecking=no server-script.sh ${DEV_SERVER_IP}:/home/ec2-user"
@@ -78,16 +76,12 @@ pipeline {
             steps{
             script{
                 echo "copy ansible files on ACM and run the playbook"
-               sshagent(['ACM']) {
+               sshagent(['DEV_SERVER_KEY']) {
     sh "scp -o StrictHostKeyChecking=no ansible/* ${ACM_IP}:/home/ec2-user"
-    //copy the ansible target key on ACM as private key file
     withCredentials([sshUserPrivateKey(credentialsId: 'ANSIBLE_TARGET_KEY',keyFileVariable: 'keyfile',usernameVariable: 'user')]){ 
     sh "scp $keyfile ${ACM_IP}:/home/ec2-user/.ssh/id_rsa"    
     }
-    //install aws credetials plugin in jenkins --another way
-    //withCredentials([aws(accessKeyVariable:'AWS_ACCESS_KEY_ID',credentialsId:'AWS_CONFIGURE',secretKeyVariable:'AWS_SECRET_ACCESS_KEY')]) {
     sh "ssh -o StrictHostKeyChecking=no ${ACM_IP} bash /home/ec2-user/prepare-ACM.sh ${AWS_ACCESS_KEY_ID} ${AWS_SECRET_ACCESS_KEY} ${DOCKER_REG_PASSWORD} ${IMAGE_NAME}"
-       //     }
         }
         }
         }    
