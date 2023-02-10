@@ -9,11 +9,36 @@ Parameters:
     Type: String
     Description: The name of the IAM Role attached to the web server instance
     Default: cloudformation
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: 
+       - 
+        Ref: WebServerImage
+      InstanceType: t2.micro
+      IamInstanceProfile: 
+       - 
+        Ref: InstanceProfile
+      KeyName: awskey
+      SecurityGroupIds: 
+       - 
+        Ref: WebServerSecurityGroup
+      Tags:
+        - 
+          Key: Name
+          Value: 
+           - 
+            Fn::Sub: '${AWS::StackName}-WebServer'
+        - 
+          Key: environment
+          Value: stagging
   InstanceProfile: 
     Type: AWS::IAM::InstanceProfile
     Properties: 
       Roles: 
-       - !Ref WebServerRoleName
+       - 
+        Ref: WebServerRoleName
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -29,23 +54,6 @@ Parameters:
           FromPort: 22
           ToPort: 22
           CidrIp: "0.0.0.0/0"         
-Resources:
-  WebServerInstance:
-    Type: AWS::EC2::Instance
-    Properties:
-      ImageId: !Ref WebServerImage
-      InstanceType: t2.micro
-      IamInstanceProfile: !Ref InstanceProfile
-      KeyName: awskey
-      SecurityGroupIds: 
-       - !Ref WebServerSecurityGroup
-      Tags:
-        - 
-          Key: Name
-          Value: !Sub '${AWS::StackName}-WebServer'
-        - 
-          Key: environment
-          Value: stagging
 Outputs:
   WebServerDnsName:
     Value: !GetAtt WebServerInstance.PublicDnsName
