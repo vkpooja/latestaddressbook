@@ -1,0 +1,15 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      java: corretto17
+  pre_build:
+    commands:
+      - echo nothing to o in the pre-build phae...
+      - mvn build
+  build:
+    commands:
+      - echo build started on 'date'
+  post_build:
+    commands:
+      - echo build completed on 'date'
