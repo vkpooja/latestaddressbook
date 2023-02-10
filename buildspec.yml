@@ -6,7 +6,6 @@ phases:
   pre_build:
     commands:
       - echo nothing to o in the pre-build phae...
-      - mvn build
   build:
     commands:
       - echo build started on 'date'
