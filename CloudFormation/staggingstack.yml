@@ -2,9 +2,6 @@ AWSTemplateFormatVersion: 2010-09-09
 Description: stagging environment
 
 Parameters:
-  WebServerImage:
-    Type: AWS::EC2::Image::Id
-    Description: Custom AMI Image for the web server instance
   WebServerRoleName:
     Type: String
     Description: The name of the IAM Role attached to the web server instance
@@ -13,9 +10,7 @@ Resources:
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: 
-       - 
-        Ref: WebServerImage
+      ImageId: ami-031af4f81d8b809a9
       InstanceType: t2.micro
       IamInstanceProfile: 
        - 
