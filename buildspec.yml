@@ -2,13 +2,20 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      java: corretto17
+      java: correctto17
   pre_build:
     commands:
-      - echo nothing to o in the pre-build phae...
+      - echo nothing to do in the pre-build phae...
   build:
     commands:
       - echo build started on 'date'
+      -  mvn package
   post_build:
     commands:
       - echo build completed on 'date'
+artifacts:
+  files:
+    - target/addressbook.war
+    - appspec.yml
+    - 'deploy-scripts/**/*'
+  discard-paths: yes
