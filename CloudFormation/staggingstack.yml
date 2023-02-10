@@ -23,7 +23,7 @@ Resources:
       Tags:
         - 
           Key: Name
-     	  Value: !Sub "${AWS::StackName}-WebServer"
+     	  Value: !Sub '${AWS::StackName}-WebServer'
         - 
           Key: environment
 	      Value: stagging
