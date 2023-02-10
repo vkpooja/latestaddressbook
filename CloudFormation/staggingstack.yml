@@ -14,25 +14,28 @@ Resources:
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: !Ref WebServerImage
+      ImageId:
+       -  Ref: WebServerImage
       InstanceType: t2.micro
-      IamInstanceProfile: !Ref InstanceProfile
+      IamInstanceProfile:
+       -  Ref: InstanceProfile
       KeyName: awskey
       SecurityGroupIds: 
-        - !Ref WebServerSecurityGroup
+       -  Ref: WebServerSecurityGroup
       Tags:
         - 
           Key: Name
-     	  Value: !Sub '${AWS::StackName}-WebServer'
+          Value: 
+           -  Fn::Sub: '${AWS::StackName}-WebServer'
         - 
           Key: environment
-	      Value: stagging
+          Value: stagging
 
   InstanceProfile: 
     Type: AWS::IAM::InstanceProfile
     Properties: 
       Roles: 
-        - !Ref: WebServerRoleName
+       -  Ref: WebServerRoleName
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -41,15 +44,16 @@ Resources:
         - 
           IpProtocol: "tcp"
           FromPort: 8080
-	      ToPort: 8080
+          ToPort: 8080
           CidrIp: "0.0.0.0/0"
         - 
           IpProtocol: -1
           FromPort: 22
-	      ToPort: 22
+          ToPort: 22
           CidrIp: "0.0.0.0/0"
           
 Outputs:
   WebServerDnsName:
-    Value: !GetAtt WebServerInstance.PublicDnsName
+    Value:
+     -  Fn::GetAtt: [ WebServerInstance, PublicDnsName ]
     Description: Public DNS name of the web server instance
