@@ -1,0 +1,52 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: stagging environment
+
+Parameters:
+  WebServerImage:
+    Type: AWS::EC2::Image::Id
+    Description: Custom AMI Image for the web server instance
+  WebServerImage:
+    Type: String
+    Description: The name of the IAM Role attached to the web server instance
+    Default: cloudformation
+Resources:
+  WebServerInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      ImageId: !Ref WebServerImage
+      InstanceType: t2.micro
+      IamInstanceProfile: !Ref InstanceProfile
+      KeyName: awskey
+      SecurityGroupIds: 
+        - !Ref WebServerSecurityGroup
+      Tags:
+        - 
+           Key: Name
+	   Value: !Sub "${AWS::StackName}-WebServer"
+        - 
+           Key: environment
+	   Value: stagging
+InstanceProfile: 
+    Type: "AWS::IAM::InstanceProfile"
+    Properties: 
+      Roles: 
+        - !Ref: WebServerRoleName
+WebServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: security group for we servers
+      SecurityGroupIngress:
+      - 
+        IpProtocol: "tcp"
+        FromPort: 8080
+	ToPort: 8080
+        CidrIp: "0.0.0.0/0"
+       - 
+        IpProtocol: -1
+        FromPort: 22
+	ToPort: 22
+        CidrIp: "0.0.0.0/0"
+Outputs:
+   WebServerDnsName:
+       Value: !GetAtt WebServerInstance.PublicDnsName
+       Description: Public DNS name of the web server instance
