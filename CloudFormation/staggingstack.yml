@@ -27,7 +27,7 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties: 
       Roles: 
-       - "cloudfomationr"
+       - "cloudfomation"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
