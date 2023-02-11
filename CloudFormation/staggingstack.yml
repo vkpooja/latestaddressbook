@@ -8,8 +8,10 @@ Resources:
       ImageId: ami-031af4f81d8b809a9
       InstanceType: t2.micro
       IamInstanceProfile: 
-       - 
-        Ref: "InstanceProfile"
+       - Type: AWS::IAM::InstanceProfile
+         Properties: 
+           Roles: 
+            - "cloudformation"
       KeyName: awskey
       SecurityGroupIds: 
        - 
@@ -23,11 +25,6 @@ Resources:
         - 
           Key: environment
           Value: stagging
-  InstanceProfile: 
-    Type: AWS::IAM::InstanceProfile
-    Properties: 
-      Roles: 
-       - "cloudformation"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
