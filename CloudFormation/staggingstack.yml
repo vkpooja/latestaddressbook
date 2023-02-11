@@ -5,21 +5,21 @@ Resources:
   WebServerInstance:
     Type: AWS::EC2::Instance
     Properties:
-      ImageId: ami-031af4f81d8b809a9
-      InstanceType: t2.micro
-      KeyName: awskey
+      ImageId: "ami-031af4f81d8b809a9"
+      InstanceType: "t2.micro"
+      KeyName: "awskey"
       SecurityGroupIds: 
        - 
         Ref: "WebServerSecurityGroup"
       Tags:
         - 
-          Key: Name
+          Key: "Name"
           Value: 
            - 
-            Fn::Sub: '${AWS::StackName}-WebServer'
+            Fn::Sub: "${AWS::StackName}-WebServer"
         - 
-          Key: environment
-          Value: stagging
+          Key: "environment"
+          Value: "stagging"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -27,15 +27,11 @@ Resources:
       SecurityGroupIngress:
         - 
           IpProtocol: "tcp"
-          FromPort: 8080
-          ToPort: 8080
+          FromPort: "8080"
+          ToPort: "8080"
           CidrIp: "0.0.0.0/0"
         - 
-          IpProtocol: -1
-          FromPort: 22
-          ToPort: 22
+          IpProtocol: "-1"
+          FromPort: "22"
+          ToPort: "22"
           CidrIp: "0.0.0.0/0"         
-Outputs:
-  WebServerDnsName:
-    Value: !GetAtt WebServerInstance.PublicDnsName
-    Description: Public DNS name of the web server instance
