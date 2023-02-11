@@ -9,11 +9,11 @@ Resources:
       InstanceType: t2.micro
       IamInstanceProfile: 
        - 
-        Ref: InstanceProfile
+        Ref: "InstanceProfile"
       KeyName: awskey
       SecurityGroupIds: 
        - 
-        Ref: WebServerSecurityGroup
+        Ref: "WebServerSecurityGroup"
       Tags:
         - 
           Key: Name
