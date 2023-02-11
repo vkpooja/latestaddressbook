@@ -1,11 +1,6 @@
 AWSTemplateFormatVersion: 2010-09-09
 Description: stagging environment
 
-Parameters:
-  WebServerRoleName:
-    Type: String
-    Description: The name of the IAM Role attached to the web server instance
-    Default: "cloudformation"
 Resources:
   WebServerInstance:
     Type: AWS::EC2::Instance
@@ -32,7 +27,7 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties: 
       Roles: 
-       - Ref: "WebServerRoleName"
+       - "cloudfomationr"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
