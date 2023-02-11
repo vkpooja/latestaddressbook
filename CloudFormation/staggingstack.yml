@@ -32,7 +32,7 @@ Resources:
     Type: AWS::IAM::InstanceProfile
     Properties: 
       Roles: 
-       - cloudformation
+       - Ref: "WebServerRoleName"
   WebServerSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
