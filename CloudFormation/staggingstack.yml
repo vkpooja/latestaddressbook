@@ -7,11 +7,6 @@ Resources:
     Properties:
       ImageId: ami-031af4f81d8b809a9
       InstanceType: t2.micro
-      IamInstanceProfile: 
-       - Type: AWS::IAM::InstanceProfile
-         Properties: 
-           Roles: 
-            - "cloudformation"
       KeyName: awskey
       SecurityGroupIds: 
        - 
